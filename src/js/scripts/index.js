@@ -2,6 +2,7 @@ import { getUser } from "./services/user.js"
 import { getRepositories } from "./services/repositories.js"
 import { user } from "./objects/user.js"
 import { screen } from "./objects/screen.js"
+import { getEvents } from "./services/events.js"
 document.getElementById('btn-search').addEventListener("click", () => {
     const userName = document.getElementById("input-search").value
     if (validateEmptyInput(userName)) return
@@ -42,19 +43,30 @@ document.getElementById("input-search").addEventListener("keyup", (e) => {
 
 async function getUserData(userName) {
     const userResponse = await getUser(userName)
-    if(userResponse.message === 'Not Found'){
+    const repositoriesResponse = await getRepositories(userName)
+    const eventResponse = await getEvents(userName)
+
+
+    if (userResponse.message === 'Not Found') {
         screen.renderNotFound()
         return
 
     }
-    const repositoriesResponse = await getRepositories(userName)
+  
+
 
 
 
     user.setInfo(userResponse)
     user.setRepositories(repositoriesResponse)
+    user.setEvents(eventResponse)
+
     screen.renderUser(user)
 
+    //user.events.forEach((events) => {
+    //console.log(events)
+    //})
+    console.log(eventResponse)
 
 }
 
